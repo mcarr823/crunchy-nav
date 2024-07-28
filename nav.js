@@ -1,4 +1,40 @@
 /**
+ * The crunchyroll website currently works by dynamically
+ * loading content into individual feeds.
+ * 
+ * This content can generally be broken up into:
+ * - anime series categories
+ * - rotating banners
+ * - single series highlight banners
+ * - video game banners
+ * - news feeds
+ * 
+ * 
+ * CrunchyNav works by waiting for that content to be
+ * dynamically loaded onto the web page by using observers.
+ * 
+ * Once the content has loaded, it "cleans" the page by
+ * removing everything except for the anime series categories.
+ * 
+ * It then listens for navigation events (arrow keys) and
+ * highlights a category/series in response to that.
+ * 
+ * 
+ * Throughout the source code you will find the following terms:
+ * 
+ * - row/category. These are the categories into which anime series
+ * are divided.
+ * eg. It could be a genre (such as Shonen) or a trait (Free To Watch)
+ * or some other such description.
+ * 
+ * - column/series. These are the individual cards, each one representing
+ * a single series.
+ * They display the series title and image.
+ * These are the cards which get highlighted during navigation.
+ * 
+ */
+
+/**
  * Attempts to retrieve the 3 main content nodes from the web page.
  * 
  * [0] is the "hero" banner, used to rotate between a few different
