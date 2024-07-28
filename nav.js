@@ -196,3 +196,111 @@ function initiateFeedObserver(){
 	feedObserver.observe(dynamicFeed, feedObserverConfig);
 
 }
+/**
+ * Retrieve all rows (categories) currently visible on the web page.
+ * 
+ * @returns All rows (categories) on the web page, or false if
+ * none are visible.
+ */
+function getRows(){
+
+	const children = getErcFeed();
+	const dynamicFeed = children[1];
+	const rows = dynamicFeed.children;
+
+	if (rows.length == 0){
+		return false;
+	}else{
+		return rows;
+	}
+
+}
+
+/**
+ * Retrieve a single row (category) from the web page at the
+ * given index.
+ * 
+ * @param {Number} rowIndex The index of the row (category) we want
+ * to grab.
+ * @returns The row at `rowIndex`, OR the row at [0] if the index
+ * hasn't been set yet, OR false if the row index is otherwise invalid.
+ */
+function getRow(rowIndex){
+
+	const rows = getRows();
+
+	// If there are no rows, or the requested row is too high,
+	// return false.
+	if (rows == false || rowIndex > rows.length - 1){
+		return false;
+	}
+	
+	// If the row is -1 (unset), return the first row instead.
+	if (rowIndex == -1){
+		return rows[0];
+	}
+
+	// Otherwise, return the requested row.
+	return rows[rowIndex];
+
+}
+
+/**
+ * Retrieve all of the columns (series cards) for the given
+ * row (category).
+ * 
+ * @param {Number} rowIndex Index of the row (category) for which to
+ * grab the columns (series cards).
+ * @returns Columns for the requested row, or false.
+ */
+function getColumns(rowIndex){
+
+	const row = getRow(rowIndex);
+
+	// If the row doesn't exist, return false
+	if (row == false){
+		return false;
+	}
+
+	const cards = row.querySelectorAll('[data-t="carousel-card-wrapper"]');
+
+	// If there aren't any columns in the given row, return false
+	if (cards.length == 0){
+		return false;
+	}
+	
+	// Otherwise, return the retrieved columns
+	return cards;
+
+}
+
+/**
+ * Retrieve a single column (series card) by the row (category)
+ * and column index.
+ * 
+ * @param {Number} rowIndex Index of the row (category) from which to
+ * retrieve a column (series card).
+ * @param {Number} columnIndex Index of the column (series card) to
+ * retrieve.
+ * @returns The requested column, OR column [0] if the index isn't set,
+ * OR false if it is otherwise invalid.
+ */
+function getColumn(rowIndex, columnIndex){
+
+	const columns = getColumns(rowIndex);
+
+	// If the columns (series cards) can't be retrieved, or the index
+	// is too high, return false.
+	if (columns == false || columnIndex > columns.length - 1){
+		return false;
+	}
+
+	// If the column index is -1 (unset), return the first result.
+	if (columnIndex == -1){
+		return columns[0];
+	}
+
+	// Otherwise, return the result
+	return columns[columnIndex];
+
+}
