@@ -126,3 +126,34 @@ function cleanDynamicFeed(){
 	return dynamicFeedChildren.length;
 
 }
+
+/**
+ * Hides the "hero" banner at the top of the web page.
+ * 
+ * It's a rotating carousel of series which takes up a lot of space,
+ * so hiding it makes the page easier to navigate.
+ * 
+ * It could be added back in the future, or modified into a new category
+ * or something instead of being removed.
+ * 
+ * But for now, this function hides it altogether, just to keep
+ * things simple.
+ */
+function hideHeroBanner(){
+
+	const children = getErcFeed();
+
+	// The first child is expected to be the "hero" banner, which
+	// rotates and shows a bunch of different shows.
+	const heroBanner = children[0];
+
+	// If the hero banner matches our expectations (first div, no class name),
+	// then let's hide it for the sake of freeing up screen space and simplifying
+	// navigation.
+	// This could be added back in later.
+	const canRemoveHeroBanner = heroBanner.className == '';
+	if (canRemoveHeroBanner){
+		heroBanner.style.display = 'none';
+	}
+
+}
