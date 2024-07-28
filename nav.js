@@ -34,6 +34,13 @@
  * 
  */
 
+
+// These two variables are used to keep track of which
+// row (category) and which column (series card)
+// is currently highlighted.
+var selectedRow = -1;
+var selectedColumn = -1;
+
 /**
  * Attempts to retrieve the 3 main content nodes from the web page.
  * 
@@ -232,6 +239,63 @@ function initiateFeedObserver(){
 	feedObserver.observe(dynamicFeed, feedObserverConfig);
 
 }
+
+/**
+ * Highlights the series card at row `newRow` and column `newColumn`.
+ * 
+ * This function also removes highlighting from whichever card was
+ * previously highlighted (where applicable) and overrides the
+ * keypress behavior (if navigation was successful).
+ * 
+ * @param {KeyboardEvent} e Keyboard event which triggered this function
+ * @param {Number} newRow The row index of the card to highlight
+ * @param {Number} newColumn The column index of the card to highlight
+ */
+function highlightCard(e, newRow, newColumn){
+
+	// Start by retrieving the currently highlighted card.
+	// If one IS highlighted, remove its styling.
+	const oldCard = getColumn(selectedRow, selectedColumn);
+	if (oldCard){
+		oldCard.style.border = '';
+	}
+
+	// Then get the new card which we now want to highlight instead.
+	const newCard = getColumn(newRow, newColumn);
+	if (newCard){
+
+		// Give the card a white botder and scroll the web page
+		// so that the card is visible.
+		newCard.style.border = '1px solid white';
+		newCard.scrollIntoView();
+
+		// Set the selected row and column to either be
+		// the new value passed into this function, OR
+		// to be 0.
+		// This is because the default values are -1.
+		if (newRow < 0)
+			selectedRow = 0;
+		else
+			selectedRow = newRow;
+		
+		if (newColumn < 0)
+			selectedColumn = 0;
+		else
+			selectedColumn = newColumn;
+
+		// Finally, prevent the keypress behavior from being handled
+		// by the web page, since we already did something (highlighted
+		// a card) in response to the event.
+		// Note that if we DIDN'T highlight a card, then we don't want to
+		// consume the event.
+		// eg. If the user is already on the first category, and they press
+		// the up arrow, then we want the page to scroll up, since there's no
+		// previous category we can navigate to anyway.
+		e.preventDefault();
+	}
+
+}
+
 /**
  * Retrieve all rows (categories) currently visible on the web page.
  * 
