@@ -603,3 +603,47 @@ function init() {
 	initiateKeypressObserver();
 
 }
+
+console.log("Loading extension");
+
+
+// Below this point is the code for actually starting the
+// extension and kicking things off.
+
+// First is the target.
+// The target is the "content" div, which initially just shows
+// a loading dialog.
+// Its content will change once the page fully loads, so this
+// is the element we want to observe to determine whether the
+// page has loaded yet or not.
+const pageLoadTarget = document.getElementById("content");
+
+// Second is the observer config.
+// We set it to only listen for changes to immediate children,
+// since that's as deep as we need to go in order to determine
+// whether the page has loaded or not.
+const pageLoadObserverConfig = {
+	childList: true,
+	subtree: false,
+	characterData: false
+};
+
+// Third is the observer itself.
+// As soon as the content div changes, the observer sets a
+// timeout.
+// After 1 second, the timeout removes the observer (since it's
+// already served its purpose) and initializes the page.
+//
+// Note that the timeout should be removed in favor of a more
+// reliable option.
+// It works most of the time, but should ideally be replaced with
+// a second observer instead.
+const pageLoadObserver = new MutationObserver(() => {
+  setTimeout(() => {
+	pageLoadObserver.disconnect();
+  	init();
+  }, 1000);
+});
+
+// Finally, start observing the page for the initial load.
+pageLoadObserver.observe(pageLoadTarget, pageLoadObserverConfig);
