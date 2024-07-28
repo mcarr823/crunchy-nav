@@ -56,3 +56,73 @@ function getErcFeed(){
 	return children;
 
 }
+
+/**
+ * Cleans the web page's content feed by removing anything
+ * which we're not interested in, or which we can't currently
+ * parse or traverse.
+ * 
+ * This is used to remove anything apart from the actual anime
+ * series we want to navigate through.
+ * 
+ * eg. It removes video game banners, recommendations, and news feeds,
+ * leaving behind only the series' cards.
+ * 
+ * Currently this function removes the offending divs from the DOM.
+ * In the future it should be changed to just hide them instead, since
+ * the crunchyroll web page throws some (non-critical) errors after
+ * they're removed.
+ * 
+ * @returns The number of items in the field after being cleaned
+ */
+function cleanDynamicFeed(){
+
+	const children = getErcFeed();
+
+	// The second child div contains the series' cards.
+	const dynamicFeed = children[1];
+
+	// The dynamic feed should have several children, each one representing
+	// a different category or genre.
+	var dynamicFeedChildren = dynamicFeed.children;
+
+	// Traverse the list by index, since node lists aren't actually arrays
+	// and don't have the usual array functions.
+	for (let i = dynamicFeedChildren.length - 1; i >= 0; i--) {
+
+		// Get the current category and its children
+		const category = dynamicFeedChildren[i];
+		const categoryChildren = category.children;
+
+		// If it has no children (series cards), remove it
+		if (categoryChildren.length != 1){
+			category.remove();
+			continue;
+		}
+
+		const categoryContent = categoryChildren[0];
+		const categoryContentChildren = categoryContent.children;
+
+		// If the child is a news item, remove it
+		if (categoryContent.className.includes('news-and-editorial')){
+			category.remove();
+			continue;
+		}
+
+		// If the category has != 2 children, remove it.
+		// This is because a category should have 2 divs:
+		// 1. the title of the category
+		// 2. the series cards
+		// In the future this should be changed to allow for
+		// banner-style series highlights as well.
+		if (categoryContentChildren.length != 2){
+			category.remove();
+			continue;
+		}
+	}
+
+	// Return the number of categories still remaining after
+	// we've removed the ones we don't want.
+	return dynamicFeedChildren.length;
+
+}
