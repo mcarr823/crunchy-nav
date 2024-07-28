@@ -404,3 +404,26 @@ function getColumn(rowIndex, columnIndex){
 	return columns[columnIndex];
 
 }
+/**
+ * Add a DOM event listener to trigger events on keypress.
+ * 
+ * This function is responsible for performing actions based
+ * on which key the user presses.
+ */
+function initiateKeypressObserver(){
+
+	document.addEventListener("keydown", e => {
+		if (e.code == "ArrowLeft"){
+		}else if (e.code == "ArrowRight"){
+		}else if (e.code == "ArrowUp"){
+		}else if (e.code == "ArrowDown"){
+		}else if (e.code == "Enter"){
+			console.log('Select show');
+			// TODO implement this
+		}else if (e.code == "Escape"){
+			console.log('Back');
+			// TODO implement this
+		}
+	});
+
+}
