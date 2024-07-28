@@ -157,3 +157,42 @@ function hideHeroBanner(){
 	}
 
 }
+
+/**
+ * Adds an observer to the dynamic content feed.
+ * 
+ * The crunchyroll web page is an "infinite scrolling" page
+ * which dynamically adds more content as you scroll.
+ * 
+ * In order to cater for this, we add an observer, so we can
+ * modify the page whenever new content is added to it.
+ */
+function initiateFeedObserver(){
+
+	const children = getErcFeed();
+	const dynamicFeed = children[1];
+
+	// Only observe the child list.
+	// We don't need deep or complex observing behavior.
+	const feedObserverConfig = {
+		childList: true,
+		subtree: false,
+		characterData: false
+	};
+
+	const feedObserver = new MutationObserver(mutations => {
+	  
+		const nodesAdded = mutations.some(mutation => mutation.addedNodes.length > 0);
+		if (nodesAdded){
+
+			// Whenever new nodes are added, clean the web page again
+			// to make the new categories easier to navigate.
+			cleanDynamicFeed();
+
+		}
+
+	});
+
+	feedObserver.observe(dynamicFeed, feedObserverConfig);
+
+}
