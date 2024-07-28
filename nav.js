@@ -404,6 +404,127 @@ function getColumn(rowIndex, columnIndex){
 	return columns[columnIndex];
 
 }
+
+/**
+ * Move up to the previous row (category) on the web page.
+ * 
+ * @param {KeyboardEvent} e Keyboard event which triggered this function
+ */
+function previousRow(e){
+
+	// If we're already on the first row (category), abort.
+	// Let the web page handle the keyboard event by scrolling up,
+	// if applicable.
+	if (selectedRow == 0){
+		return;
+	}
+
+	// If the current row is -1 (unset), default to 0.
+	// Otherwise, subtract 1 to go to the previous row.
+	let newRow;
+	if (selectedRow == -1){
+		newRow = 0;
+	}else{
+		newRow = selectedRow - 1;
+	}
+
+	// Try to retrieve the given row. Abort if that fails
+	const row = getRow(newRow);
+	if (row == false){
+		return;
+	}
+
+	// Highlight the first card in the row
+	highlightCard(e, newRow, 0);
+
+}
+
+/**
+ * Move down to the next row (category) on the web page.
+ * 
+ * @param {KeyboardEvent} e Keyboard event which triggered this function
+ */
+function nextRow(e){
+
+	// Increase the row by 1 to go to the next row.
+	// -1 (unset) changes to 0 anyway when incremented,
+	// so we don't need to handle that, unlike when going
+	// to the previous row.
+	// Going out of bounds (> max row length) is handled
+	// in getRow, so we don't need to handle that either.
+	const newRow = selectedRow + 1;
+
+	// Try to retrieve the given row. Abort if that fails
+	const row = getRow(newRow);
+	if (row == false){
+		return;
+	}
+
+	// Highlight the first card in the row
+	highlightCard(e, newRow, 0);
+
+}
+
+/**
+ * Move left to the previous column (series card) on the web page.
+ * 
+ * @param {KeyboardEvent} e Keyboard event which triggered this function
+ */
+function previousColumn(e){
+
+	// If we have already selected the first column, don't do anything.
+	// Let the web page handle the left arrow key event by scrolling
+	// instead, if applicable.
+	if (selectedColumn == 0){
+		return;
+	}
+
+	// If the current column is -1 (unset), default to 0.
+	// Otherwise, subtract 1 to go to the previous column.
+	let newColumn;
+	if (selectedColumn == -1){
+		newColumn = 0;
+	}else {
+		newColumn = selectedColumn - 1;
+	}
+
+	// Try to retrieve the given column. Abort if that fails
+	const column = getColumn(selectedRow, newColumn);
+	if (column == false){
+		return;
+	}
+
+	// Highlight the card
+	highlightCard(e, selectedRow, newColumn);
+
+}
+
+/**
+ * Move right to the next column (series card) on the web page.
+ * 
+ * @param {KeyboardEvent} e Keyboard event which triggered this function
+ */
+function nextColumn(e){
+
+	// Increase the column by 1 to go to the next column.
+	// -1 (unset) changes to 0 anyway when incremented,
+	// so we don't need to handle that, unlike when going
+	// to the previous column.
+	// Going out of bounds (> max column length) is handled
+	// in getColumn, so we don't need to handle that either.
+	const newColumn = selectedColumn + 1;
+
+	// Try to retrieve the given column. Abort if that fails
+	const column = getColumn(selectedRow, newColumn);
+	if (column == false){
+		return;
+	}
+
+	// Highlight the card
+	highlightCard(e, selectedRow, newColumn);
+
+}
+
 /**
  * Add a DOM event listener to trigger events on keypress.
  * 
@@ -414,9 +535,13 @@ function initiateKeypressObserver(){
 
 	document.addEventListener("keydown", e => {
 		if (e.code == "ArrowLeft"){
+			previousColumn(e);
 		}else if (e.code == "ArrowRight"){
+			nextColumn(e);
 		}else if (e.code == "ArrowUp"){
+			previousRow(e);
 		}else if (e.code == "ArrowDown"){
+			nextRow(e);
 		}else if (e.code == "Enter"){
 			console.log('Select show');
 			// TODO implement this
