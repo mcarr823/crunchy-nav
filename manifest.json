@@ -1,0 +1,30 @@
+{
+  "manifest_version": 3,
+  "name": "CrunchyNav",
+  "version": "1.0",
+
+  "description": "Makes the Crunchyroll website easier to navigate with a keyboard",
+
+  "icons": {
+    "48": "icons/48.png",
+    "96": "icons/96.png",
+    "128": "icons/128.png",
+    "256": "icons/256.png",
+    "512": "icons/512.png",
+    "1024": "icons/1024.png"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://www.crunchyroll.com/"],
+      "js": ["nav.js"]
+    }
+  ],
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "crunchynav@mcarr.dev"
+    }
+  }
+
+}
