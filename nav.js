@@ -552,3 +552,54 @@ function initiateKeypressObserver(){
 	});
 
 }
+
+/**
+ * Initializes CrunchyNav by performing all of the expected
+ * initial events in order.
+ * 
+ * This function should be called once the web page has
+ * fully loaded.
+ */
+function init() {
+
+	console.log("Init");
+
+	// Grab the feed for the first time.
+	// If it fails, abort.
+	//
+	// Note that this is the only time we actually check
+	// for a value of false from this function.
+	// That is because we don't progress any further if it
+	// returns false. And if it isn't false during init,
+	// then it shouldn't be false at any point afterwards.
+	//
+	// Also note that the console.error statements run within
+	// getErcFeed instead of here.
+	// That's because there's more than one reason why the function
+	// might return false.
+	const initialFeed = getErcFeed();
+	if (initialFeed == false){
+		return;
+	}
+
+	// Clean the feed for the first time.
+	// If the results are empty, abort.
+	//
+	// Again, note that this is the only place where the length
+	// is actually checked.
+	// Because, like with the initialFeed above, it should either
+	// return an invalid result once (here), or never.
+	const dynamicFeedChildrenLength = cleanDynamicFeed();
+	if (dynamicFeedChildrenLength == 0){
+		console.error("CrunchyNav: Failed to find any categories. Aborting");
+		return;
+	}
+
+	// Hide the banner
+	hideHeroBanner();
+
+	// Initialize the dynamic feed observer and the keypress observer
+	initiateFeedObserver();
+	initiateKeypressObserver();
+
+}
