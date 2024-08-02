@@ -101,20 +101,22 @@ function getErcFeed(){
 }
 
 /**
- * Cleans the web page's content feed by removing anything
+ * Cleans the web page's content feed by hiding anything
  * which we're not interested in, or which we can't currently
  * parse or traverse.
  * 
- * This is used to remove anything apart from the actual anime
+ * This is used to hide anything apart from the actual anime
  * series we want to navigate through.
  * 
- * eg. It removes video game banners, recommendations, and news feeds,
+ * eg. It hides video game banners, recommendations, and news feeds,
  * leaving behind only the series' cards.
  * 
- * Currently this function removes the offending divs from the DOM.
- * In the future it should be changed to just hide them instead, since
- * the crunchyroll web page throws some (non-critical) errors after
+ * This function hides the offending divs instead of removing them.
+ * This is because the crunchyroll web page throws some errors if
  * they're removed.
+ * They aren't critical errors, but they do slow the web page down,
+ * especially when new content is being loaded. So it's better to
+ * hide the divs instead of removing them altogether.
  */
 function cleanDynamicFeed(){
 
@@ -129,38 +131,77 @@ function cleanDynamicFeed(){
 
 	// Traverse the list by index, since node lists aren't actually arrays
 	// and don't have the usual array functions.
-	for (let i = dynamicFeedChildren.length - 1; i >= 0; i--) {
+	for (let i = 0; i < dynamicFeedChildren.length - 1; i++) {
 
 		// Get the current category and its children
 		const category = dynamicFeedChildren[i];
 		const categoryChildren = category.children;
 
-		// If it has no children (series cards), remove it
+		// If it has no children (series cards), hide it
 		if (categoryChildren.length != 1){
-			category.remove();
+			category.style.display = 'none';
 			continue;
 		}
 
 		const categoryContent = categoryChildren[0];
 		const categoryContentChildren = categoryContent.children;
 
-		// If the child is a news item, remove it
+		// If the child is a news item, hide it
 		if (categoryContent.className.includes('news-and-editorial')){
-			category.remove();
+			category.style.display = 'none';
 			continue;
 		}
 
-		// If the category has != 2 children, remove it.
+		// If the category has != 2 children, hide it.
 		// This is because a category should have 2 divs:
 		// 1. the title of the category
 		// 2. the series cards
 		// In the future this should be changed to allow for
 		// banner-style series highlights as well.
 		if (categoryContentChildren.length != 2){
-			category.remove();
+			category.style.display = 'none';
 			continue;
 		}
 	}
+
+}
+
+/**
+ * Retrieves the content of the dynamic series feed div.
+ *
+ * It only returns visible results. ie. Those not hidden by
+ * the cleanDynamicFeed() function.
+ *
+ * @returns All visible divs inside of the dynamic feed section
+ */
+function getDynamicFeed(){
+
+	const children = getErcFeed();
+
+	// The second child div contains the series' cards.
+	const dynamicFeed = children[1];
+
+	// The dynamic feed should have several children, each one representing
+	// a different category or genre.
+	var dynamicFeedChildren = dynamicFeed.children;
+
+	var returnData = [];
+
+	// Traverse the list by index, since node lists aren't actually arrays
+	// and don't have the usual array functions.
+	for (let i = 0; i < dynamicFeedChildren.length - 1; i++) {
+
+		// Get the current category and its children
+		const category = dynamicFeedChildren[i];
+
+		// If the category isn't hidden, add it to the return data
+		if (category.style.display != 'none'){
+			returnData.push(category);
+		}
+	}
+
+	// Return all of the non-hidden items
+	return returnData;
 
 }
 
@@ -298,9 +339,7 @@ function highlightCard(e, newRow, newColumn){
  */
 function getRows(){
 
-	const children = getErcFeed();
-	const dynamicFeed = children[1];
-	const rows = dynamicFeed.children;
+	const rows = getDynamicFeed();
 
 	if (rows.length == 0){
 		return false;
