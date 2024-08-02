@@ -115,8 +115,6 @@ function getErcFeed(){
  * In the future it should be changed to just hide them instead, since
  * the crunchyroll web page throws some (non-critical) errors after
  * they're removed.
- * 
- * @returns The number of items in the field after being cleaned
  */
 function cleanDynamicFeed(){
 
@@ -163,10 +161,6 @@ function cleanDynamicFeed(){
 			continue;
 		}
 	}
-
-	// Return the number of categories still remaining after
-	// we've removed the ones we don't want.
-	return dynamicFeedChildren.length;
 
 }
 
@@ -583,17 +577,12 @@ function init() {
 	}
 
 	// Clean the feed for the first time.
-	// If the results are empty, abort.
-	//
-	// Again, note that this is the only place where the length
-	// is actually checked.
-	// Because, like with the initialFeed above, it should either
-	// return an invalid result once (here), or never.
-	const dynamicFeedChildrenLength = cleanDynamicFeed();
-	if (dynamicFeedChildrenLength == 0){
-		console.error("CrunchyNav: Failed to find any categories. Aborting");
-		return;
-	}
+	// The feed might not actually exist yet, since the web page
+	// loads in a staggered manner.
+	// But we re-clean the page whenever new content is loaded by using
+	// an observer anyway, so there's no harm in running it here as well,
+	// just in case the feed loaded before the observer.
+	cleanDynamicFeed();
 
 	// Hide the banner
 	hideHeroBanner();
@@ -602,6 +591,47 @@ function init() {
 	initiateFeedObserver();
 	initiateKeypressObserver();
 
+}
+
+/**
+ * Adds an observer to the 'app' body.
+ * 
+ * The crunchyroll web page loads in a staggered fashion.
+ *
+ * It starts with an empty "content" div, which it loads content
+ * into (pageLoadObserver handles this).
+ * Once that loads it then requests data to populate the "app-body-wrapper".
+ * 
+ * This function observes the latter, waiting for it to get content.
+ *
+ * For more information on the observer config and mutator, check the
+ * pageLoadTarget/Observer instead, since it works the same way.
+ */
+function initAppBodyObserver(){
+
+	const appContents = document.body.getElementsByClassName("app-body-wrapper");
+
+	// This should always exist... unless the website has changed
+	// in some way.
+	// But let's check for it anyway.
+	if (appContents.length == 0){
+		console.error("CrunchyNav: App body not found. Aborting");
+		return false;
+	}
+
+	const observerConfig = {
+		childList: true,
+		subtree: false,
+		characterData: false
+	};
+
+	const observer = new MutationObserver(() => {
+		observer.disconnect();
+		init();
+	});
+
+	observer.observe(appContents[0], observerConfig);
+	
 }
 
 console.log("Loading extension");
@@ -629,20 +659,14 @@ const pageLoadObserverConfig = {
 };
 
 // Third is the observer itself.
-// As soon as the content div changes, the observer sets a
-// timeout.
-// After 1 second, the timeout removes the observer (since it's
-// already served its purpose) and initializes the page.
-//
-// Note that the timeout should be removed in favor of a more
-// reliable option.
-// It works most of the time, but should ideally be replaced with
-// a second observer instead.
+// As soon as the content div changes, the observer runs
+// initAppBodyObserver() in order to create a new observer
+// for the loaded content.
+// This is because of the staggered manner in which the
+// crunchyroll web page loads.
 const pageLoadObserver = new MutationObserver(() => {
-  setTimeout(() => {
 	pageLoadObserver.disconnect();
-  	init();
-  }, 1000);
+  	initAppBodyObserver();
 });
 
 // Finally, start observing the page for the initial load.
