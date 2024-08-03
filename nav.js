@@ -576,13 +576,41 @@ function initiateKeypressObserver(){
 		}else if (e.code == "ArrowDown"){
 			nextRow(e);
 		}else if (e.code == "Enter"){
-			console.log('Select show');
-			// TODO implement this
-		}else if (e.code == "Escape"){
-			console.log('Back');
-			// TODO implement this
+			selectSeries(e);
 		}
 	});
+
+}
+
+/**
+ * Loads the selected series, if one is actually highlighted.
+ *
+ * Grabs the anchor link associated with a given series card
+ * and navigates to that page, which should be the series page
+ * containing a description of the series, buttons to add it
+ * to your watchlist or play it, and so on.
+ */
+function selectSeries(e){
+
+	// Grab the highlighted series card
+	const series = getColumn(selectedRow, selectedColumn);
+
+	if (series){
+
+		// Grab any anchor links within that card
+		const anchors = series.getElementsByTagName('a');
+		if (anchors.length > 0){
+
+			// The first anchor link should be the series link.
+			// eg. https://www.crunchyroll.com/series/[seriesName]
+			// Navigate to that page
+			const anchor = anchors[0];
+			location.href = anchor.href;
+			return;
+
+		}
+		
+	}
 
 }
 
