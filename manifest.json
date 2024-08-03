@@ -18,6 +18,10 @@
     {
       "matches": ["https://www.crunchyroll.com/"],
       "js": ["nav.js"]
+    },
+    {
+      "matches": ["https://www.crunchyroll.com/series/*"],
+      "js": ["series.js"]
     }
   ],
 
