@@ -21,7 +21,8 @@
     },
     {
       "matches": ["https://www.crunchyroll.com/series/*"],
-      "js": ["series.js"]
+      "js": ["js/pageLoad.js", "series.js"],
+      "css": ["css/series.css"]
     }
   ],
 

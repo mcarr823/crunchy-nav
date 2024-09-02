@@ -1,0 +1,22 @@
+.erc-series-key-art,
+.erc-premium-upsell-banner,
+.erc-season-with-navigation,
+.erc-similar-to,
+.erc-upsell-popup-body,
+#onetrust-consent-sdk,
+.up-next-section,
+.erc-footer{
+    display:none !important;
+}
+
+
+.up-next-section-button-clone{
+    margin-top: .625rem;
+    width: auto;
+    margin-right: .625rem;
+}
+
+.active{
+    background:white;
+    background-color:white !important;
+}
