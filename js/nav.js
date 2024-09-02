@@ -660,7 +660,7 @@ function init() {
 
 }
 
-console.log("Loading extension");
+console.log("Loading extension nav.js");
 
 initPageLoadObserver(() => {
 	init();

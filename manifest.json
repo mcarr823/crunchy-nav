@@ -17,11 +17,11 @@
   "content_scripts": [
     {
       "matches": ["https://www.crunchyroll.com/"],
-      "js": ["js/pageLoad.js", "nav.js"]
+      "js": ["js/pageLoad.js", "js/nav.js"]
     },
     {
       "matches": ["https://www.crunchyroll.com/series/*"],
-      "js": ["js/pageLoad.js", "series.js"],
+      "js": ["js/pageLoad.js", "js/series.js"],
       "css": ["css/series.css"]
     }
   ],
