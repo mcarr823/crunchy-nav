@@ -78,3 +78,25 @@ function initPageLoadObserver(callback){
     pageLoadObserver.observe(pageLoadTarget, pageLoadObserverConfig);
 
 }
+
+/**
+ * Generic DOM observer.
+ * 
+ * Observe a DOM element until its children load, then run the callback.
+ * 
+ * @param elem DOM element to observe
+ * @param callback Callback to invoke once the DOM element loads
+ */
+function observeElement(elem, callback){
+    const observerConfig = {
+		childList: true,
+		subtree: false,
+		characterData: false
+	};
+
+	const observer = new MutationObserver(() => {
+		callback();
+	});
+
+	observer.observe(elem, observerConfig);
+}
